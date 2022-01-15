@@ -66,3 +66,5 @@ Step 3 from 38 | Iteration: 1 from 1
 ```
 
 After all tabs have been opened, it waits until the previously entered time expires (killTime) and then all windows are closed again.
+
+- last Update: 15.01.2022 - DD.MM.YYYY
