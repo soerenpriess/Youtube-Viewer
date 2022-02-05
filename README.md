@@ -32,10 +32,14 @@ useXlxs = False
 python viewer.py
 ```
 
-After you started the programm you will be asked for the Url, number of iterations, kill time for the videos and the current views. Set your params here.
+After you started the programm you will be asked for the Url, number of iterations, search for specific country, kill time for the videos and the current views. Set your params
+here. If you want to search for a specific country you will be asked for the country code here. Set here for example "GB" if you only want Proxies from Great Britain or "US" for 
+United States and so on.
+You can find a list of all codes here under Alpha-2-code : https://www.iban.com/country-codes
 ```bash
 URL:
-Iterations (1 Iteration = 30-40 Tabs): 
+Iterations (1 Iteration = 30-40 Tabs):
+Do you want to search for proxies in a specific country? (y/n):
 Kill-Time: 
 Current-Views: 
 ```
@@ -67,4 +71,9 @@ Step 3 from 38 | Iteration: 1 from 1
 
 After all tabs have been opened, it waits until the previously entered time expires (killTime) and then all windows are closed again.
 
-- last Update: 15.01.2022 - DD.MM.YYYY
+## Updates
+v1.0 = initialisation
+v1.1 = country code filter
+
+
+- last Update: 05.02.2022 - DD.MM.YYYY
