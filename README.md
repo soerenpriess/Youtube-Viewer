@@ -35,13 +35,17 @@ python viewer.py
 After you started the programm you will be asked for the Url, number of iterations, search for specific country, kill time for the videos and the current views. Set your params
 here. If you want to search for a specific country you will be asked for the country code here. Set here for example "GB" if you only want Proxies from Great Britain or "US" for 
 United States and so on.
+
 You can find a list of all codes here under Alpha-2-code : https://www.iban.com/country-codes
+
+
+The number of the iteration is between 30-40, because it can happen that a proxy is used several times and thus attempts are made to imitate user behavior.
 ```bash
-URL:
-Iterations (1 Iteration = 30-40 Tabs):
-Do you want to search for proxies in a specific country? (y/n):
-Kill-Time: 
-Current-Views: 
+"URL:"
+"Iterations (1 Iteration = 30-40 Tabs):"
+"Do you want to search for proxies in a specific country? (y/n):"
+"Kill-Time:"
+"Current-Views:"
 ```
 Now it will search for proxies until it finds a working one.
 ```bash
