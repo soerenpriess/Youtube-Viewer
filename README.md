@@ -77,6 +77,7 @@ After all tabs have been opened, it waits until the previously entered time expi
 
 ## Updates
 v1.0 = initialisation
+
 v1.1 = country code filter
 
 
