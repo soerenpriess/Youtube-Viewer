@@ -9,12 +9,21 @@ from selenium import webdriver
 import re
 import random
 
-useXlxs = False
-url = input("URL: ") #Url of the Video
-iteration = input("Iterations (1 Iteration = 30-40 Tabs): ") #how many iterations (1 Iteration = 30-40 repetitions)
-killTime = input("Kill-Time: ") #how longe the video should play after every tab is open
-startViews = input("Current-Views: ") #current views of the video
+useXlxs = False # Store Metadata in Excel
+useCustomCountry = False # Search for a country
+countryCode = "" # country code for search
+url = input("URL: ")  # Url of the Video
+iteration = input("Iterations (1 Iteration = 30-40 Tabs): ")  # how many iterations (1 Iteration = 30-40 repetitions)
+customCountry = input("Do you want to search for proxies in a specific country? (y/n): ") # search for country option
+
+if customCountry == 'y' or customCountry == 'Y':
+    countryCode = input("Please enter your country code (for example: GB=Great Britain, RU=Russia, etc ): ")
+    useCustomCountry = True
+
+killTime = input("Kill-Time: ")  # how longe the video should play after every tab is open
+startViews = input("Current-Views: ")  # current views of the video
 beginTime = datetime.now() #start time
+
 
 
 def checkFreeSources():
@@ -88,25 +97,6 @@ def startBot(currIteration, proxy):
     return True
 
 
-def main():
-    """
-    call for each iteration the required functions to get a new proxy and open the tabs.
-    after that the params will be saved in xlxs
-    :return:
-    """
-    for x in range(int(iteration)):
-        print("Start Iteration " + str(x))
-        work = testProxies(getProxyList())  # stores working proxies
-        print(work)  # shows the current used proxiy
-        startBot(x, work[0])
-
-    endTime = datetime.now()
-    runTime = endTime - beginTime
-    endViews = input("End-Views: ")
-    if useXlxs:
-        setXlsxData(str(endTime), str(runTime), str(endViews))
-    print("Run-Time: " + str(runTime))
-
 
 def getXlsxData():
     """
@@ -143,23 +133,42 @@ def setXlsxData(endTime, runTime, endViews):
     columns = sheet["H" + str(nextRow)].value = endViews
     wb.save("test.xlsx")
 
+def sortProxiesByCountry(proxies, code):
+    """
+    Filter the list by country code and return this filtered list
+    :param proxies: list with proxies
+    :param code: country code
+    :return: list with proxies filtered by country code
+    """
+    workingProxy = []
+    for i in range(len(proxies)):
+        if proxies[i]['code'] == code:
+            print("Found a Proxy with your Code! - " + proxies[i]['code'] + " : " + proxies[i]['full_ip'])
+            workingProxy.append(proxies[i])
+    return workingProxy
 
-
-def getProxyList():
+def getProxyList(code):
     """
     gets a list of free proxy from the url and format it
     :return: list with proxies
     """
-    url = 'https://free-proxy-list.net/'
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Cafari/537.36'}
-    source = str(requests.get(url, headers=headers, timeout=10).text)
-    data = [list(filter(None, i))[0] for i in re.findall('<td class="hm">(.*?)</td>|<td>(.*?)</td>', source)]
-    groupings = [dict(zip(['ip', 'port', 'code', 'using_anonymous'], data[i:i + 4])) for i in range(0, len(data), 4)]
-    final_groupings = [{'full_ip': "{ip}:{port}".format(**i)} for i in groupings]
-    return final_groupings
+    try:
+        url = 'https://free-proxy-list.net/'
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Cafari/537.36'}
+        source = str(requests.get(url, headers=headers, timeout=10).text)
+        data = [list(filter(None, i))[0] for i in re.findall('<td class="hm">(.*?)</td>|<td>(.*?)</td>', source)]
+        groupings = [dict(zip(['ip', 'port', 'code', 'using_anonymous'], data[i:i + 4])) for i in
+                     range(0, len(data), 4)]
+        final_groupings = [{'full_ip': "{ip}:{port}".format(**i), 'code': "{code}".format(**i)} for i in groupings]
 
+        if useCustomCountry == True:
+            final_groupings = sortProxiesByCountry(final_groupings, code)
 
+        return final_groupings
+    except IOError as e:
+        print(e)
+        getProxyList()
 
 def testProxies(proxies):
     """
@@ -181,6 +190,28 @@ def testProxies(proxies):
             return workingProxy
 
     print("Found no Proxy!")
+
+
+
+def main():
+    """
+    call for each iteration the required functions to get a new proxy and open the tabs.
+    after that the params will be saved in xlxs
+    :return:
+    """
+    for x in range(int(iteration)):
+        print("Start Iteration " + str(x))
+        work = testProxies(getProxyList(countryCode))  # stores working proxies
+        print(work)  # shows the current used proxiy
+        startBot(x, work[0])
+
+    endTime = datetime.now()
+    runTime = endTime - beginTime
+    endViews = input("End-Views: ")
+    if useXlxs:
+        setXlsxData(str(endTime), str(runTime), str(endViews))
+    print("Run-Time: " + str(runTime))
+
 
 main()
 
